@@ -143,7 +143,7 @@ def get_group(user_id):
         # Extract the private key from the user document
         return user_doc.to_dict().get('secure_group')
     generate_keys(user_id)
-    return get_group
+    return get_group(user_id)
 
 
 def in_group(group_id,user_id):
