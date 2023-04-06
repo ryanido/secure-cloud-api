@@ -65,7 +65,7 @@ async def get_files_data():
         file_data = file_doc.to_dict()
         file_data['id'] = file_doc.id
         files_data.append(file_data)
-    return files_data
+    return JSONResponse(files_data)
     
 @app.post("/upload-file")
 def upload(id:str ,file: UploadFile):
