@@ -26,7 +26,7 @@ async def add_to_group(group_id: str, user_id: str):
     user_ref.update({
         'secure_group': firestore.ArrayUnion([user_id])
     })
-    return {"message": f"User {user_id} added to group {group_id}"}
+    return JSONResponse({"message": f"User {user_id} added to group {group_id}"})
 
 @app.post("/remove-from-group")
 async def remove_from_group(group_id: str, user_id: str):
