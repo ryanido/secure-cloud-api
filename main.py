@@ -6,14 +6,16 @@ from firebase_admin import firestore
 
 
 app = FastAPI()
+
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    response = {"Hello": "World"}
+    return JSONResponse(response, headers={"Access-Control-Allow-Origin": "*"})
 
 @app.get("/get-group/{id}")
 async def get_group_handler(id: str):
     group = get_group(id)
-    return JSONResponse(group)
+    return JSONResponse(group, headers={"Access-Control-Allow-Origin": "*"})
 
 @app.post("/add-to-group")
 async def add_to_group(group_id: str, user_id: str):
@@ -26,7 +28,7 @@ async def add_to_group(group_id: str, user_id: str):
     user_ref.update({
         'secure_group': firestore.ArrayUnion([user_id])
     })
-    return JSONResponse({"message": f"User {user_id} added to group {group_id}"})
+    return JSONResponse({"message": f"User {user_id} added to group {group_id}"}, headers={"Access-Control-Allow-Origin": "*"})
 
 @app.post("/remove-from-group")
 async def remove_from_group(group_id: str, user_id: str):
@@ -37,7 +39,7 @@ async def remove_from_group(group_id: str, user_id: str):
     user_ref.update({
         'secure_group': firestore.ArrayRemove([user_id])
     })
-    return {"message": f"User {user_id} removed from group {group_id}"}
+    return JSONResponse({"message": f"User {user_id} removed from group {group_id}"}, headers={"Access-Control-Allow-Origin": "*"})
 
 @app.get("/get-file")
 async def get_file(id: str, file_id: str):
@@ -54,7 +56,7 @@ async def get_file(id: str, file_id: str):
         f.write(decrypted_contents)
 
     # Return the file as a response
-    return FileResponse(path=file_data['name'], filename=file_data['name'])
+    return FileResponse(path=file_data['name'], filename=file_data['name'], headers={"Access-Control-Allow-Origin": "*"})
 
 @app.get("/get-files-data")
 async def get_files_data():
@@ -65,12 +67,12 @@ async def get_files_data():
         file_data = file_doc.to_dict()
         file_data['id'] = file_doc.id
         files_data.append(file_data)
-    return JSONResponse(files_data)
-    
+    return JSONResponse(files_data, headers={"Access-Control-Allow-Origin": "*"})
+
 @app.post("/upload-file")
 def upload(id:str ,file: UploadFile):
     contents = file.file.read()
     public_key = get_public_key(id)
     encrypted_file = encrypt_file(public_key,contents)
     write_to_storage(file.filename,encrypted_file,id)
-    return {"message": f"Successfully uploaded {file.filename}"}
+    return JSONResponse({"message": f"Successfully uploaded {file.filename}"}, headers={"Access-Control-Allow-Origin": "*"})
