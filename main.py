@@ -3,9 +3,19 @@ from fastapi.responses import JSONResponse, Response, FileResponse
 from utils import *
 from firebase_admin import credentials,storage
 from firebase_admin import firestore
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -56,7 +66,10 @@ async def get_file(id: str, file_id: str):
         f.write(decrypted_contents)
 
     # Return the file as a response
-    return FileResponse(path=file_data['name'], filename=file_data['name'], headers={"Access-Control-Allow-Origin": "*"})
+    return FileResponse(path=file_data['name'], filename=file_data['name'])
+    
+
+
 
 @app.get("/get-files-data")
 async def get_files_data():
