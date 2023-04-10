@@ -176,7 +176,7 @@ def write_to_storage(blob_name, data, author_id):
     file_ref.set({
         'name': blob_name,
         'author': author_id,
-        'date_added': datetime.utcnow(), # Add the date added attribute with the current UTC time
+        'date_added': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
         'size': len(data) # Add the size attribute with the length of the data
     })
 
